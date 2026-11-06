@@ -1,0 +1,50 @@
+services:
+  mysql:
+    image: docker.m.daocloud.io/library/mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root123456"
+      MYSQL_DATABASE: "app"
+      MYSQL_USER: "app"
+      MYSQL_PASSWORD: "app123456"
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ../data/mysql:/var/lib/mysql
+
+  neo4j:
+    image: docker.m.daocloud.io/library/neo4j:5
+    container_name: neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: "neo4j/neo4j123456"
+      TZ: "Asia/Shanghai"
+    volumes:
+      - ../data/neo4j:/data
+
+  chromadb:
+    image: ghcr.m.daocloud.io/chroma-core/chroma:latest
+    container_name: chromadb
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: "/chroma/chroma"
+    volumes:
+      - ../data/chroma:/chroma/chroma
+
+  redis:
+    image: docker.m.daocloud.io/library/redis:7
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ../data/redis:/data
